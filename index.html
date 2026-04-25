@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>شجرة العائلة</title>
+  <style>
+    body {margin:0;font-family:Tahoma;background:#0f172a;color:#fff;overflow:hidden}
+    header{padding:10px;background:#1e293b;display:flex;gap:10px;align-items:center}
+    button{padding:8px 12px;border:none;border-radius:6px;background:#38bdf8;color:#000;cursor:pointer}
+    #canvas{width:100vw;height:90vh;overflow:hidden;position:relative}
+    .node{
+      position:absolute;background:#1e293b;border:1px solid #38bdf8;
+      padding:8px;border-radius:8px;text-align:center;min-width:100px;
+      cursor:pointer
+    }
+    .node img{width:40px;height:40px;border-radius:50%}
+    #formBox{
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+      background:#1e293b;padding:20px;border-radius:10px;display:none
+    }
+    input{display:block;margin:5px 0;padding:5px;width:200px}
+  </style>
+</head>
+<body>
+
+<header>
+  <button onclick="addPerson()">➕ إضافة</button>
+  <button onclick="save()">💾 حفظ</button>
+</header>
+
+<div id="canvas"></div>
+
+<div id="formBox">
+  <h3>إضافة فرد</h3>
+  <input id="name" placeholder="الاسم">
+  <input id="birth" placeholder="تاريخ الميلاد">
+  <input id="img" placeholder="رابط الصورة">
+  <button onclick="create()">حفظ</button>
+</div>
+
+<script>
+let people = JSON.parse(localStorage.getItem("family") || "[]");
+
+function render(){
+  const canvas = document.getElementById("canvas");
+  canvas.innerHTML="";
+  people.forEach((p,i)=>{
+    let div=document.createElement("div");
+    div.className="node";
+    div.style.left = (100 + i*120) + "px";
+    div.style.top = "100px";
+    div.innerHTML = `
+      <img src="${p.img||'https://via.placeholder.com/40'}"><br>
+      ${p.name}
+    `;
+    canvas.appendChild(div);
+  });
+}
+
+function addPerson(){
+  document.getElementById("formBox").style.display="block";
+}
+
+function create(){
+  let name=document.getElementById("name").value;
+  let birth=document.getElementById("birth").value;
+  let img=document.getElementById("img").value;
+  people.push({name,birth,img});
+  document.getElementById("formBox").style.display="none";
+  render();
+}
+
+function save(){
+  localStorage.setItem("family",JSON.stringify(people));
+  alert("تم الحفظ");
+}
+
+render();
+</script>
+
+</body>
+</html>
